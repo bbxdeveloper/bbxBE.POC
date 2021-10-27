@@ -35,7 +35,7 @@ namespace bbxBE.POC.Domain.Entities
             individualExemptionSpecified = p_individualExemptionSpecified;
             if(p_individualExemptionSpecified)
             {
-                individualExemption = true;     //Kiasadózó
+                individualExemption = true;         //Kiasadózó
             }
 
         }
