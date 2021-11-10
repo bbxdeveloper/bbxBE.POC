@@ -36,4 +36,16 @@
     <ProjectReference Include="..\bbxBE.POC.Infrastructure.Shared\bbxBE.POC.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Reports\C-03176S21.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\SzallitoSzamla.trdx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\SzallitoSzamlaPocNoParameters.trdx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

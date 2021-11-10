@@ -11,9 +11,11 @@ namespace bbxBE.POC.Infrastructure.Shared
         public static void AddSharedInfrastructure(this IServiceCollection services, IConfiguration _config)
         {
             services.Configure<MailSettings>(_config.GetSection("MailSettings"));
+            services.Configure<ReportSettings>(_config.GetSection("ReportSettings"));
             services.AddTransient<IDateTimeService, DateTimeService>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IMockService, MockService>();
+            services.AddTransient<IReportService, ReportService>();
         }
     }
 }

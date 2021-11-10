@@ -1,0 +1,247 @@
+{
+  "InvoiceData": {
+    "-xmlns:base": "http://schemas.nav.gov.hu/OSA/3.0/base",
+    "-xmlns:common": "http://schemas.nav.gov.hu/NTCA/1.0/common",
+    "-xmlns": "http://schemas.nav.gov.hu/OSA/3.0/data",
+    "invoiceNumber": "C-03176S21",
+    "invoiceIssueDate": "2021-09-25",
+    "completenessIndicator": "false",
+    "invoiceMain": {
+      "invoice": {
+        "invoiceHead": {
+          "supplierInfo": {
+            "supplierTaxNumber": {
+              "base:taxpayerId": "10301584",
+              "base:vatCode": "2",
+              "base:countyCode": "43"
+            },
+            "supplierName": "Relax Ipari és Kereskedelmi Kft.",
+            "supplierAddress": {
+              "base:simpleAddress": {
+                "base:countryCode": "HU",
+                "base:postalCode": "1222",
+                "base:city": "Budapest",
+                "base:additionalAddressDetail": "Háros 47-49"
+              }
+            },
+            "supplierBankAccountNumber": "10404993-50515755-74861005"
+          },
+          "customerInfo": {
+            "customerVatStatus": "DOMESTIC",
+            "customerVatData": {
+              "customerTaxNumber": {
+                "base:taxpayerId": "13815275",
+                "base:vatCode": "2",
+                "base:countyCode": "16"
+              }
+            },
+            "customerName": "FABUSZ KFT.",
+            "customerAddress": {
+              "base:simpleAddress": {
+                "base:countryCode": "HU",
+                "base:postalCode": "5054",
+                "base:city": "JÁSZALSÓSZENTGY",
+                "base:additionalAddressDetail": "ÉPÍTŐ ÚT 33."
+              }
+            }
+          },
+          "invoiceDetail": {
+            "invoiceCategory": "NORMAL",
+            "invoiceDeliveryDate": "2021-09-25",
+            "currencyCode": "HUF",
+            "exchangeRate": "1",
+            "paymentMethod": "CARD",
+            "paymentDate": "2021-09-25",
+            "invoiceAppearance": "PAPER"
+          }
+        },
+        "invoiceLines": {
+          "mergedItemIndicator": "false",
+          "line": [
+            {
+              "lineNumber": "1",
+              "productCodes": {
+                "productCode": [
+                  {
+                    "productCodeCategory": "OWN",
+                    "productCodeOwnValue": "ETI-2143512"
+                  },
+                  {
+                    "productCodeCategory": "VTSZ",
+                    "productCodeOwnValue": "85362"
+                  }
+                ]
+              },
+              "lineExpressionIndicator": "true",
+              "lineDescription": "ETIMAT6 C6A 2P kismegszakító",
+              "quantity": "4.0",
+              "unitOfMeasure": "PIECE",
+              "unitPrice": "2357.0000",
+              "unitPriceHUF": "2357.0000",
+              "lineAmountsNormal": {
+                "lineNetAmountData": {
+                  "lineNetAmount": "9428.00",
+                  "lineNetAmountHUF": "9428.00"
+                },
+                "lineVatRate": {
+                  "vatPercentage": "0.27"
+                },
+                "lineVatData": {
+                  "lineVatAmount": "2545.56",
+                  "lineVatAmountHUF": "2545.56"
+                },
+                "lineGrossAmountData": {
+                  "lineGrossAmountNormal": "11973.56",
+                  "lineGrossAmountNormalHUF": "11973.56"
+                }
+              }
+            },
+            {
+              "lineNumber": "2",
+              "productCodes": {
+                "productCode": [
+                  {
+                    "productCodeCategory": "OWN",
+                    "productCodeOwnValue": "VEG-SRH222-6/1000"
+                  },
+                  {
+                    "productCodeCategory": "VTSZ",
+                    "productCodeOwnValue": "85359"
+                  }
+                ]
+              },
+              "lineExpressionIndicator": "true",
+              "lineDescription": "Zsugorcső gyantás 22-6/1000",
+              "quantity": "1.0",
+              "unitOfMeasure": "PIECE",
+              "unitPrice": "1485.0000",
+              "unitPriceHUF": "1485.0000",
+              "lineAmountsNormal": {
+                "lineNetAmountData": {
+                  "lineNetAmount": "1485.00",
+                  "lineNetAmountHUF": "1485.00"
+                },
+                "lineVatRate": {
+                  "vatPercentage": "0.27"
+                },
+                "lineVatData": {
+                  "lineVatAmount": "400.95",
+                  "lineVatAmountHUF": "400.95"
+                },
+                "lineGrossAmountData": {
+                  "lineGrossAmountNormal": "1885.95",
+                  "lineGrossAmountNormalHUF": "1885.95"
+                }
+              }
+            },
+            {
+              "lineNumber": "3",
+              "productCodes": {
+                "productCode": [
+                  {
+                    "productCodeCategory": "OWN",
+                    "productCodeOwnValue": "VEG-TW3-6"
+                  },
+                  {
+                    "productCodeCategory": "VTSZ",
+                    "productCodeOwnValue": "82032"
+                  }
+                ]
+              },
+              "lineExpressionIndicator": "true",
+              "lineDescription": "TELEFON FOGÓ",
+              "quantity": "1.0",
+              "unitOfMeasure": "PIECE",
+              "unitPrice": "2470.0000",
+              "unitPriceHUF": "2470.0000",
+              "lineAmountsNormal": {
+                "lineNetAmountData": {
+                  "lineNetAmount": "2470.00",
+                  "lineNetAmountHUF": "2470.00"
+                },
+                "lineVatRate": {
+                  "vatPercentage": "0.27"
+                },
+                "lineVatData": {
+                  "lineVatAmount": "666.90",
+                  "lineVatAmountHUF": "666.90"
+                },
+                "lineGrossAmountData": {
+                  "lineGrossAmountNormal": "3136.90",
+                  "lineGrossAmountNormalHUF": "3136.90"
+                }
+              }
+            },
+            {
+              "lineNumber": "4",
+              "productCodes": {
+                "productCode": [
+                  {
+                    "productCodeCategory": "OWN",
+                    "productCodeOwnValue": "OVK-STH"
+                  },
+                  {
+                    "productCodeCategory": "VTSZ",
+                    "productCodeOwnValue": "85369"
+                  }
+                ]
+              },
+              "lineExpressionIndicator": "true",
+              "lineDescription": "OVK STH szigetelt toldó",
+              "quantity": "10.0",
+              "unitOfMeasure": "PIECE",
+              "unitPrice": "43.0000",
+              "unitPriceHUF": "43.0000",
+              "lineAmountsNormal": {
+                "lineNetAmountData": {
+                  "lineNetAmount": "430.00",
+                  "lineNetAmountHUF": "430.00"
+                },
+                "lineVatRate": {
+                  "vatPercentage": "0.27"
+                },
+                "lineVatData": {
+                  "lineVatAmount": "116.10",
+                  "lineVatAmountHUF": "116.10"
+                },
+                "lineGrossAmountData": {
+                  "lineGrossAmountNormal": "546.10",
+                  "lineGrossAmountNormalHUF": "546.10"
+                }
+              }
+            }
+          ]
+        },
+        "invoiceSummary": {
+          "summaryNormal": {
+            "summaryByVatRate": {
+              "vatRate": {
+                "vatPercentage": "0.27"
+              },
+              "vatRateNetData": {
+                "vatRateNetAmount": "13813.00",
+                "vatRateNetAmountHUF": "13813.00"
+              },
+              "vatRateVatData": {
+                "vatRateVatAmount": "3729.51",
+                "vatRateVatAmountHUF": "3729.51"
+              },
+              "vatRateGrossData": {
+                "vatRateGrossAmount": "17542.51",
+                "vatRateGrossAmountHUF": "17542.51"
+              }
+            },
+            "invoiceNetAmount": "13813.00",
+            "invoiceNetAmountHUF": "13813.00",
+            "invoiceVatAmount": "3730.00",
+            "invoiceVatAmountHUF": "3730.00"
+          },
+          "summaryGrossData": {
+            "invoiceGrossAmount": "17543.00",
+            "invoiceGrossAmountHUF": "17543.00"
+          }
+        }
+      }
+    }
+  }
+}

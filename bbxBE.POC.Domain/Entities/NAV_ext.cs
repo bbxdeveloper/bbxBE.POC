@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace bbxBE.POC.Domain.Entities
 {
     public partial class CustomerInfoType
     {
-        public CustomerInfoType() 
+        public CustomerInfoType()
         {
             customerVatData = null; //alapból ez legyen null
         }
@@ -33,7 +29,7 @@ namespace bbxBE.POC.Domain.Entities
         public SupplierInfoType(bool p_individualExemptionSpecified)
         {
             individualExemptionSpecified = p_individualExemptionSpecified;
-            if(p_individualExemptionSpecified)
+            if (p_individualExemptionSpecified)
             {
                 individualExemption = true;         //Kiasadózó
             }
@@ -101,7 +97,7 @@ namespace bbxBE.POC.Domain.Entities
             netaDeclarationSpecified = p_netaDeclarationSpecified;
         }
     }
-        public partial class SummaryType
+    public partial class SummaryType
     {
         public SummaryType()
         {
@@ -140,7 +136,7 @@ namespace bbxBE.POC.Domain.Entities
 
     public partial class AggregateInvoiceLineDataType
     {
-        public AggregateInvoiceLineDataType() {  }
+        public AggregateInvoiceLineDataType() { }
 
         public AggregateInvoiceLineDataType(bool p_lineExchangeRateSpecified)
         {
@@ -150,14 +146,14 @@ namespace bbxBE.POC.Domain.Entities
 
     public partial class ProductFeeTakeoverDataType
     {
-        public ProductFeeTakeoverDataType () { }
-        public ProductFeeTakeoverDataType( bool p_takeoverAmountSpecified)
+        public ProductFeeTakeoverDataType() { }
+        public ProductFeeTakeoverDataType(bool p_takeoverAmountSpecified)
         {
             takeoverAmountSpecified = p_takeoverAmountSpecified;
         }
     }
 
-        public partial class UserHeaderType
+    public partial class UserHeaderType
     {
         public UserHeaderType() { }
 
@@ -208,7 +204,7 @@ namespace bbxBE.POC.Domain.Entities
 
     public partial class BasicHeaderType
     {
-        public BasicHeaderType() {}
+        public BasicHeaderType() { }
 
         public BasicHeaderType(DateTime p_timestamp, string p_requestId)
         {
@@ -231,11 +227,11 @@ namespace bbxBE.POC.Domain.Entities
         {
 
             var now = DateTime.UtcNow;
-            
+
             var requestId = NAVUtil.GetRequestID(now);                   //A request mentjen a valós tick-el
             var timestamp = now.AddTicks(-1 * now.Ticks % 10000);        //így NAV_TIMESTAMPFORMAT -ban fog serializálódni
             header = new BasicHeaderType(timestamp, requestId);
-            
+
             user = new UserHeaderType(requestId, timestamp, p_taxnum, p_techUserLogin, p_techUserPwd, p_XMLSignKey);
 
         }
@@ -294,14 +290,14 @@ namespace bbxBE.POC.Domain.Entities
                 cserekulcsával végezték, aki a tokent korábban igényelte.
             */
 
-            exchangeToken = NAVUtil.AES_128_ECB.Decrypt(p_token, p_NAVExchangeKey);
+            exchangeToken = NAVUtil.AES_128_ECB.Decrypt(p_token.AsString(), p_NAVExchangeKey);
         }
     }
 
     public partial class ManageInvoiceRequest : ManageInvoiceRequestType
     {
         public ManageInvoiceRequest() { }
-        
+
         public ManageInvoiceRequest(string p_taxnum, string p_techUserLogin, string p_techUserPwd, string p_XMLSignKey, string p_NAVExchangeKey, byte[] p_token, string[] p_invoicesData)
             : base(p_taxnum, p_techUserLogin, p_techUserPwd, p_XMLSignKey, p_NAVExchangeKey, p_token)
         {
@@ -319,8 +315,8 @@ namespace bbxBE.POC.Domain.Entities
 
                 var invoper = new InvoiceOperationType()
                 {
-                    index = index+1,
-                    invoiceOperation = (invoiceData.Contains( NAVGlobal.originalInvoiceNumber) ? ManageInvoiceOperationType.MODIFY : ManageInvoiceOperationType.CREATE),
+                    index = index + 1,
+                    invoiceOperation = (invoiceData.Contains(NAVGlobal.originalInvoiceNumber) ? ManageInvoiceOperationType.MODIFY : ManageInvoiceOperationType.CREATE),
 
                     /*
                      Az invoiceData tag egy különálló XML-t tartalmaz, BASE64 formátumra elkódolva. A belül lévő
@@ -421,14 +417,14 @@ namespace bbxBE.POC.Domain.Entities
                 cserekulcsával végezték, aki a tokent korábban igényelte.
             */
 
-            exchangeToken = NAVUtil.AES_128_ECB.Decrypt(p_token, p_NAVExchangeKey);
+            exchangeToken = NAVUtil.AES_128_ECB.Decrypt(p_token.AsString(), p_NAVExchangeKey);
         }
     }
 
 
     public partial class ManageAnnulmentRequest : ManageAnnulmentRequestType
     {
-        public ManageAnnulmentRequest() {  }
+        public ManageAnnulmentRequest() { }
 
         public ManageAnnulmentRequest(string p_taxnum, string p_techUserLogin, string p_techUserPwd, string p_XMLSignKey, string p_NAVExchangeKey, byte[] p_token, string[] p_annulmentData)
             : base(p_taxnum, p_techUserLogin, p_techUserPwd, p_XMLSignKey, p_NAVExchangeKey, p_token)
