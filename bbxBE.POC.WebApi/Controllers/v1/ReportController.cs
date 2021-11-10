@@ -21,7 +21,7 @@ namespace bbxBE.POC.WebApi.Controllers.v1
             _rl = rl;
         }
 
-        [Route("report/render/{ID}/{OutputFormat}")]
+        [Route("render/{ID}/{OutputFormat}")]
         [HttpPost]
         [ProducesResponseType(typeof(FileContentResult), 200)]
         public IActionResult RenderReportPost([FromRoute] string ID, [FromRoute] string OutputFormat, ReportParams parameters)
@@ -29,7 +29,7 @@ namespace bbxBE.POC.WebApi.Controllers.v1
             return _rl.GetReportFile(ContentRootPath, OutputFormat, ID, parameters);
         }
 
-        [Route("report/outputs")]
+        [Route("outputs")]
         [HttpGet]
         public ActionResult<string[]> AvailableExportTypes()
         {
