@@ -180,7 +180,7 @@
                 </TextBox>
               </Items>
             </Panel>
-            <Table DataSourceName="tableDataSource" Width="17.944cm" Height="1.803cm" Left="0cm" Top="1.7cm" Name="table1">
+            <Table DataSourceName="tableDataSource" Width="17.943cm" Height="1.803cm" Left="0cm" Top="1.7cm" Name="table1">
               <Body>
                 <Cells>
                   <TableCell RowIndex="0" ColumnIndex="0" RowSpan="1" ColumnSpan="1">
@@ -203,7 +203,7 @@
                   </TableCell>
                   <TableCell RowIndex="0" ColumnIndex="2" RowSpan="1" ColumnSpan="7">
                     <ReportItem>
-                      <Panel Width="12.027cm" Height="0.9cm" Left="8.4cm" Top="2.7cm" Name="panel15" StyleName="">
+                      <Panel Width="12.026cm" Height="0.9cm" Left="8.4cm" Top="2.7cm" Name="panel15" StyleName="">
                         <Style>
                           <Font Name="Courier New" Size="7pt" Bold="False" />
                         </Style>
@@ -536,7 +536,7 @@
             <TableGroup Name="tableGroup5" />
           </ColumnGroups>
           <Bindings>
-            <Binding Path="DataSource.Source" Expression="= Parameters.JsonSummaryDataSourceValue.Value" />
+            <Binding Path="DataSource.Source" Expression="= Parameters.JsonDataSourceValue.Value" />
           </Bindings>
         </Table>
       </Items>
@@ -577,6 +577,5 @@
     <ReportParameter Name="paymentDate" Text="paymentDate" Visible="True" />
     <ReportParameter Name="documentNumber" Text="documentNumber" Visible="True" />
     <ReportParameter Name="JsonDataSourceValue" Visible="True" />
-    <ReportParameter Name="JsonSummaryDataSourceValue" Visible="True" />
   </ReportParameters>
 </Report>

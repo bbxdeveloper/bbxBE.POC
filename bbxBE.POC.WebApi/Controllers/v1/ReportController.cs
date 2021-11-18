@@ -29,6 +29,14 @@ namespace bbxBE.POC.WebApi.Controllers.v1
             return _rl.GetReportFile(ContentRootPath, OutputFormat, ID, parameters);
         }
 
+        [Route("render/grades/{ID}/{OutputFormat}")]
+        [HttpPost]
+        [ProducesResponseType(typeof(FileContentResult), 200)]
+        public IActionResult RenderGradesReportPost([FromRoute] string ID, [FromRoute] string OutputFormat, ReportParams parameters)
+        {
+            return _rl.GetGradesReportFile(ContentRootPath, OutputFormat, ID, parameters);
+        }
+
         [Route("outputs")]
         [HttpGet]
         public ActionResult<string[]> AvailableExportTypes()

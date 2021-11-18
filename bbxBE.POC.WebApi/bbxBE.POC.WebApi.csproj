@@ -37,7 +37,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Reports\bbx_report_poc2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Reports\C-03176S21.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\OsszegFokozatos.trdx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\OsszegFokozatosSub.trdx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\SzallitoSzamla.trdx">
