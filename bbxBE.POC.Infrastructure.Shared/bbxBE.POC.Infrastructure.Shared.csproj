@@ -12,8 +12,12 @@
     <PackageReference Include="AutoBogus" Version="2.13.1" />
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
     <PackageReference Include="MimeKit" Version="2.10.1" />
+    <PackageReference Include="Telerik.Reporting.OpenXmlRendering.Trial" Version="15.2.21.915" />
+    <PackageReference Include="Telerik.Reporting.Trial" Version="15.2.21.915" />
+    <PackageReference Include="Telerik.Reporting.WebServiceDataSource.Trial" Version="15.2.21.915" />
   </ItemGroup>
 </Project>
