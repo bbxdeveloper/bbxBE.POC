@@ -56,7 +56,7 @@ namespace bbxBE.POC.WebApi
                 app.UseHsts();
             }
 
-            dbContext.Database.EnsureCreated();
+            // dbContext.Database.EnsureCreated();
 
             // Add this line; you'll need `using Serilog;` up the top, too
             app.UseSerilogRequestLogging();
