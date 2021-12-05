@@ -238,7 +238,7 @@
       </Items>
     </PageFooterSection>
   </Items>
-  <PageSettings PaperKind="A4" Landscape="True" ContinuousPaper="False">
+  <PageSettings PaperKind="Custom" PaperSize="297mm, 210mm" Landscape="False" ContinuousPaper="False">
     <Margins>
       <MarginsU Left="2cm" Right="2cm" Top="2cm" Bottom="2cm" />
     </Margins>
