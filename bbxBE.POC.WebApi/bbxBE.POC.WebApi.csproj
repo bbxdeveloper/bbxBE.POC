@@ -43,6 +43,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="bbxBE.POC.WebApi.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\C-03176S21.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
