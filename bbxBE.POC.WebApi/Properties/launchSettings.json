@@ -19,6 +19,16 @@
       "sqlDebugging": false,
       "nativeDebugging": false
     },
+    "Local SQLite": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "LocalSqLite"
+      },
+      "sqlDebugging": false,
+      "nativeDebugging": false
+    },
     "bbxBE.POC.WebApi": {
       "commandName": "Project",
       "launchBrowser": true,

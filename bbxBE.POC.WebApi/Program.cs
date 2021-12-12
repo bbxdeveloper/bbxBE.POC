@@ -49,6 +49,7 @@ namespace bbxBE.POC.WebApi
             .UseSerilog() //Uses Serilog instead of default .NET Logger
             .ConfigureWebHostDefaults(webBuilder =>
             {
+                webBuilder.CaptureStartupErrors(true);
                 webBuilder.UseStartup<Startup>();
             });
     }
