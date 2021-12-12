@@ -34,7 +34,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                 }
                 else
                 {
-                    return products.Where(x => x.ProductCode.Contains(searchString)).ToList();
+                    return products.Where(x => x.ProductCode.Contains(searchString) || x.Name.Contains(searchString)).ToList();
                 }
             }
         }
