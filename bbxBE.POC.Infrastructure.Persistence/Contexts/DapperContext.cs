@@ -24,6 +24,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Contexts
             _dbType switch
             {
                 DataBaseTypeEnum.SQLITE_LOCAL => new SqliteConnection(_connectionString),
+                DataBaseTypeEnum.MSSQL_SERVER => new SqlConnection(_connectionString),
                 _ => new SqlConnection(_connectionString),
             };
     }

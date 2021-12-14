@@ -13,19 +13,6 @@ namespace bbxBE.POC.Infrastructure.Persistence
         {
             services.AddSingleton<DapperContext>();
 
-            //if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-            //{
-            //    services.AddDbContext<ApplicationDbContext>(options =>
-            //        options.UseInMemoryDatabase("ApplicationDb"));
-            //}
-            //else
-            //{
-            //    services.AddDbContext<ApplicationDbContext>(options =>
-            //   options.UseSqlServer(
-            //       configuration.GetConnectionString("DefaultConnection"),
-            //       b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-            //}
-
             #region Repositories
 
             services.AddSingleton<IProductQueryRepository, ProductQueryRepository>();
@@ -35,6 +22,8 @@ namespace bbxBE.POC.Infrastructure.Persistence
             #region Commands And Queries
 
             services.AddSingleton<ProductListQuery>();
+            services.AddSingleton<ProductSearchByCodeQuery>();
+            services.AddSingleton<ProductSearchByNameQuery>();
 
             #endregion Commands And Queries
         }
