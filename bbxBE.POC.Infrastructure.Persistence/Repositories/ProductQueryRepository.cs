@@ -1,4 +1,5 @@
 ﻿using bbxBE.POC.Application.DTOs;
+using bbxBE.POC.Application.Extensions;
 using bbxBE.POC.Application.Interfaces.Repositories;
 using bbxBE.POC.Infrastructure.Persistence.Contexts;
 using bbxBE.POC.Infrastructure.Persistence.Query;
@@ -17,8 +18,8 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
         private const string COUNT_PRODUCTS = "SELECT COUNT(*) FROM CTRZS WHERE ACTIVE = @active";
         private const string QUERY_PRODUCTS = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active";
-        private const string SEARCH_PRODUCTS_BY_CODE = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMKOD LIKE '%@searchString%'";
-        private const string SEARCH_PRODUCTS_BY_NAME = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMNEV LIKE '%@searchString%'";
+        private const string SEARCH_PRODUCTS_BY_CODE = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMKOD LIKE @searchString";
+        private const string SEARCH_PRODUCTS_BY_NAME = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMNEV LIKE @searchString";
 
         #endregion SQL
 
@@ -91,8 +92,12 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     }
                 }
 
-                var products = await connection.QueryAsync<CTRZS>(QUERY_PRODUCTS,
-                    new { topCount = req.TopCount, active = active });
+                var parameters = new DynamicParameters(new Dictionary<string, object>
+                    {
+                        { "@topCount", req.TopCount },
+                        { "@active", active },
+                    });
+                var products = await connection.QueryAsync<CTRZS>(QUERY_PRODUCTS, parameters);
 
                 if (products.Count() == 0)
                 {
@@ -139,8 +144,13 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                         }
                     }
 
-                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_CODE,
-                        new { topCount = req.TopCount, active, searchString = req.SearchString });
+                    var parameters = new DynamicParameters(new Dictionary<string, object>
+                    {
+                        { "@topCount", req.TopCount },
+                        { "@active", active },
+                        { "@searchString", req.SearchString.EncodeForLikeOperator() },
+                    });
+                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_CODE, parameters);
 
                     if (products.Count() == 0)
                     {
@@ -193,8 +203,13 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                         }
                     }
 
-                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_NAME,
-                        new { topCount = req.TopCount, active, searchString = req.SearchString });
+                    var parameters = new DynamicParameters(new Dictionary<string, object>
+                    {
+                        { "@topCount", req.TopCount },
+                        { "@active", active },
+                        { "@searchString", req.SearchString.EncodeForLikeOperator() },
+                    });
+                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_NAME, parameters);
 
                     if (products.Count() == 0)
                     {
