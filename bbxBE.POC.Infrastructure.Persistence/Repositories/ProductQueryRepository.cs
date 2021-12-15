@@ -81,7 +81,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                 {
                     res.Result = _cache[nameof(Query)];
 
-                    if (res.Result.Count() > 0 && res.Result.Count() >= req.TopCount)
+                    if (res.Result.Any() && res.Result.Count() >= req.TopCount)
                     {
                         res.Result = res.Result.Take(req.TopCount);
                         return res;
@@ -99,7 +99,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     });
                 var products = await connection.QueryAsync<CTRZS>(QUERY_PRODUCTS, parameters);
 
-                if (products.Count() == 0)
+                if (!products.Any())
                 {
                     res.Message = EMPTY_RESULT;
                     return res;
@@ -133,10 +133,20 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     {
                         res.Result = _cache[nameof(SearchProductByCode)];
 
-                        if (res.Result.Count() > 0 && res.Result.Count() >= req.TopCount)
+                        if (res.Result.Any() && res.Result.Count() >= req.TopCount)
                         {
-                            res.Result = res.Result.Take(req.TopCount);
-                            return res;
+                            // At first, we try to do the quicksearch in the cache
+                            res.Result = res.Result.Where(x => x.TERMKOD.Contains(req.SearchString)).Take(req.TopCount);
+
+                            // In case of no match, we run the query on the database - and clear the cache from the previous try.
+                            if (!res.Result.Any())
+                            {
+                                _cache.Remove(nameof(SearchProductByCode));
+                            }
+                            else
+                            {
+                                return res;
+                            }
                         }
                         else
                         {
@@ -152,7 +162,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     });
                     var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_CODE, parameters);
 
-                    if (products.Count() == 0)
+                    if (!products.Any())
                     {
                         res.Message = EMPTY_SEARCH_RESULT;
                         return res;
@@ -192,10 +202,20 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     {
                         res.Result = _cache[nameof(SearchProductByName)];
 
-                        if (res.Result.Count() > 0 && res.Result.Count() >= req.TopCount)
+                        if (res.Result.Any() && res.Result.Count() >= req.TopCount)
                         {
-                            res.Result = res.Result.Take(req.TopCount);
-                            return res;
+                            // At first, we try to do the quicksearch in the cache
+                            res.Result = res.Result.Where(x => x.TERMNEV.Contains(req.SearchString)).Take(req.TopCount);
+
+                            // In case of no match, we run the query on the database - and clear the cache from the previous try.
+                            if (!res.Result.Any())
+                            {
+                                _cache.Remove(nameof(SearchProductByCode));
+                            }
+                            else
+                            {
+                                return res;
+                            }
                         }
                         else
                         {
@@ -211,7 +231,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     });
                     var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_NAME, parameters);
 
-                    if (products.Count() == 0)
+                    if (!products.Any())
                     {
                         res.Message = EMPTY_SEARCH_RESULT;
                         return res;
