@@ -77,6 +77,9 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
                 ClearCacheIfExpired();
 
+                _cache.Remove(nameof(SearchProductByCode));
+                _cache.Remove(nameof(SearchProductByName));
+
                 if (_cache.ContainsKey(nameof(Query)))
                 {
                     res.Result = _cache[nameof(Query)];
