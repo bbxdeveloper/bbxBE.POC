@@ -4,20 +4,20 @@ using System.Threading.Tasks;
 namespace bbxBE.POC.Infrastructure.Persistence.Query
 {
     /// <summary>
-    /// Query for searching products by product name.
+    /// Query for getting a list of products without applying search criteria - except filtering (in)active products.
     /// </summary>
-    public class ProductSearchByNameQuery
+    public class ProductListQueryForSearch
     {
         private readonly IProductQueryRepository _productQueries;
 
-        public ProductSearchByNameQuery(IProductQueryRepository productQueries)
+        public ProductListQueryForSearch(IProductQueryRepository productQueries)
         {
             _productQueries = productQueries;
         }
 
         public Task<ProductListQueryResponse> Execute(ProductListQueryRequest req)
         {
-            return _productQueries.SearchProductByName(req);
+            return _productQueries.QueryForSearch(req);
         }
     }
 }

@@ -5,10 +5,8 @@ namespace bbxBE.POC.Application.Interfaces.Repositories
 {
     public interface IProductQueryRepository
     {
-        public Task<ProductListQueryResponse> Query(ProductListQueryRequest req);
+        public Task<ProductListQueryResponse> QueryForSearch(ProductListQueryRequest req);
 
-        public Task<ProductListQueryResponse> SearchProductByCode(ProductListQueryRequest req);
-
-        public Task<ProductListQueryResponse> SearchProductByName(ProductListQueryRequest req);
+        public Task<ProductListQueryResponse> SearchProduct(ProductListQueryRequest req);
     }
 }

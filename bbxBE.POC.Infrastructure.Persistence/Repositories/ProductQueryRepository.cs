@@ -16,10 +16,16 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
     {
         #region SQL
 
-        private const string COUNT_PRODUCTS = "SELECT COUNT(*) FROM CTRZS WHERE ACTIVE = @active";
-        private const string QUERY_PRODUCTS = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active";
-        private const string SEARCH_PRODUCTS_BY_CODE = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMKOD LIKE @searchString";
-        private const string SEARCH_PRODUCTS_BY_NAME = "SELECT TOP (@topCount) * FROM CTRZS WHERE ACTIVE = @active AND TERMNEV LIKE @searchString";
+        private const string COUNT_PRODUCTS = "SELECT COUNT(*) FROM CTRZS";
+        private const string QUERY_PRODUCTS = "SELECT TOP (@topCount) * FROM CTRZS";
+
+        // Search - only TERMNEV and TERMKOD
+
+        private const string QUERY_PRODUCTS_FOR_SEARCH = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS";
+
+        private const string SEARCH_PRODUCTS = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS WHERE TERMKOD LIKE @searchString OR TERMNEV LIKE @searchString";
+        private const string SEARCH_PRODUCTS_BY_CODE = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS WHERE TERMKOD LIKE @searchString";
+        private const string SEARCH_PRODUCTS_BY_NAME = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS WHERE TERMNEV LIKE @searchString";
 
         #endregion SQL
 
@@ -31,7 +37,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
         #endregion Messages
 
-        private readonly Dictionary<string, IEnumerable<CTRZS>> _cache;
+        private readonly Dictionary<string, IEnumerable<CTRZS>> _SearchCache;
 
         private readonly DapperContext _context;
 
@@ -46,7 +52,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
             _rowCountThreshold = _configuration.GetValue<int>("RowCountThreshold");
 
-            _cache = new Dictionary<string, IEnumerable<CTRZS>>();
+            _SearchCache = new Dictionary<string, IEnumerable<CTRZS>>();
 
             _cacheExpirationInMinutes = _configuration.GetValue<int>("CacheExpirationInMinutes");
             _cacheLastHeartBeat = DateTime.UtcNow;
@@ -58,11 +64,11 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
             if ((momentOfCheck - _cacheLastHeartBeat).TotalMinutes >= _cacheExpirationInMinutes)
             {
                 _cacheLastHeartBeat = momentOfCheck;
-                _cache.Clear();
+                _SearchCache.Clear();
             }
         }
 
-        public async Task<ProductListQueryResponse> Query(ProductListQueryRequest req)
+        public async Task<ProductListQueryResponse> QueryForSearch(ProductListQueryRequest req)
         {
             using (var connection = _context.CreateConnection())
             {
@@ -73,16 +79,14 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                 };
 
                 Math.Clamp(req.TopCount, 1, _rowCountThreshold);
-                int active = req.Active ? 0 : 1;
 
                 ClearCacheIfExpired();
 
-                _cache.Remove(nameof(SearchProductByCode));
-                _cache.Remove(nameof(SearchProductByName));
+                _SearchCache.Remove(nameof(SearchProduct));
 
-                if (_cache.ContainsKey(nameof(Query)))
+                if (_SearchCache.ContainsKey(nameof(QueryForSearch)))
                 {
-                    res.Result = _cache[nameof(Query)];
+                    res.Result = _SearchCache[nameof(QueryForSearch)];
 
                     if (res.Result.Any() && res.Result.Count() >= req.TopCount)
                     {
@@ -91,16 +95,15 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     }
                     else
                     {
-                        _cache.Remove(nameof(Query));
+                        _SearchCache.Remove(nameof(QueryForSearch));
                     }
                 }
 
                 var parameters = new DynamicParameters(new Dictionary<string, object>
                     {
                         { "@topCount", req.TopCount },
-                        { "@active", active },
                     });
-                var products = await connection.QueryAsync<CTRZS>(QUERY_PRODUCTS, parameters);
+                var products = await connection.QueryAsync<CTRZS>(QUERY_PRODUCTS_FOR_SEARCH, parameters);
 
                 if (!products.Any())
                 {
@@ -110,13 +113,13 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
                 res.Result = products;
 
-                _cache.Add(nameof(Query), products);
+                _SearchCache.Add(nameof(QueryForSearch), products);
 
                 return res;
             }
         }
 
-        public async Task<ProductListQueryResponse> SearchProductByCode(ProductListQueryRequest req)
+        public async Task<ProductListQueryResponse> SearchProduct(ProductListQueryRequest req)
         {
             using (var connection = _context.CreateConnection())
             {
@@ -125,16 +128,17 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     Result = new List<CTRZS>(),
                     IsError = false
                 };
+
+                Math.Clamp(req.TopCount, 1, _rowCountThreshold);
+
                 if (!string.IsNullOrWhiteSpace(req.SearchString))
                 {
-                    Math.Clamp(req.TopCount, 1, _rowCountThreshold);
-                    int active = req.Active ? 0 : 1;
 
                     ClearCacheIfExpired();
 
-                    if (_cache.ContainsKey(nameof(SearchProductByCode)))
+                    if (_SearchCache.ContainsKey(nameof(SearchProduct)))
                     {
-                        res.Result = _cache[nameof(SearchProductByCode)];
+                        res.Result = _SearchCache[nameof(SearchProduct)];
 
                         if (res.Result.Any() && res.Result.Count() >= req.TopCount)
                         {
@@ -144,7 +148,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                             // In case of no match, we run the query on the database - and clear the cache from the previous try.
                             if (!res.Result.Any())
                             {
-                                _cache.Remove(nameof(SearchProductByCode));
+                                _SearchCache.Remove(nameof(SearchProduct));
                             }
                             else
                             {
@@ -153,17 +157,16 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                         }
                         else
                         {
-                            _cache.Remove(nameof(SearchProductByCode));
+                            _SearchCache.Remove(nameof(SearchProduct));
                         }
                     }
 
                     var parameters = new DynamicParameters(new Dictionary<string, object>
                     {
                         { "@topCount", req.TopCount },
-                        { "@active", active },
                         { "@searchString", req.SearchString.EncodeForLikeOperator() },
                     });
-                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_CODE, parameters);
+                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS, parameters);
 
                     if (!products.Any())
                     {
@@ -173,76 +176,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
                     res.Result = products;
 
-                    _cache.Add(nameof(SearchProductByCode), products);
-
-                    return res;
-                }
-
-                res.IsError = true;
-                res.Message = EMPTY_SEARCHSTRING;
-
-                return res;
-            }
-        }
-
-        public async Task<ProductListQueryResponse> SearchProductByName(ProductListQueryRequest req)
-        {
-            using (var connection = _context.CreateConnection())
-            {
-                var res = new ProductListQueryResponse
-                {
-                    Result = new List<CTRZS>(),
-                    IsError = false
-                };
-                if (!string.IsNullOrWhiteSpace(req.SearchString))
-                {
-                    Math.Clamp(req.TopCount, 1, _rowCountThreshold);
-                    int active = req.Active ? 0 : 1;
-
-                    ClearCacheIfExpired();
-
-                    if (_cache.ContainsKey(nameof(SearchProductByName)))
-                    {
-                        res.Result = _cache[nameof(SearchProductByName)];
-
-                        if (res.Result.Any() && res.Result.Count() >= req.TopCount)
-                        {
-                            // At first, we try to do the quicksearch in the cache
-                            res.Result = res.Result.Where(x => x.TERMNEV.Contains(req.SearchString)).Take(req.TopCount);
-
-                            // In case of no match, we run the query on the database - and clear the cache from the previous try.
-                            if (!res.Result.Any())
-                            {
-                                _cache.Remove(nameof(SearchProductByCode));
-                            }
-                            else
-                            {
-                                return res;
-                            }
-                        }
-                        else
-                        {
-                            _cache.Remove(nameof(SearchProductByName));
-                        }
-                    }
-
-                    var parameters = new DynamicParameters(new Dictionary<string, object>
-                    {
-                        { "@topCount", req.TopCount },
-                        { "@active", active },
-                        { "@searchString", req.SearchString.EncodeForLikeOperator() },
-                    });
-                    var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS_BY_NAME, parameters);
-
-                    if (!products.Any())
-                    {
-                        res.Message = EMPTY_SEARCH_RESULT;
-                        return res;
-                    }
-
-                    res.Result = products;
-
-                    _cache.Add(nameof(SearchProductByName), products);
+                    _SearchCache.Add(nameof(SearchProduct), products);
 
                     return res;
                 }

@@ -12,26 +12,23 @@ namespace bbxBE.POC.WebApi.Controllers.v1
     {
         private readonly IWebHostEnvironment _p_env;
 
-        private readonly ProductListQuery _productListQuery;
-        private readonly ProductSearchByCodeQuery _productSearchByCodeQuery;
-        private readonly ProductSearchByNameQuery _productSearchByNameQuery;
+        private readonly ProductListQueryForSearch _productListQueryForSearch;
+        private readonly ProductSearchQuery _productSearchQuery;
 
         private readonly int _defaultTopCount;
 
         private string ContentRootPath => _p_env.ContentRootPath;
 
         public ProductController(
-            ProductListQuery productListQuery,
-            ProductSearchByCodeQuery productSearchByCodeQuery,
-            ProductSearchByNameQuery productSearchByNameQuery,
+            ProductListQueryForSearch productListQueryForSearch,
+            ProductSearchQuery productSearchQuery,
             IWebHostEnvironment p_env,
             IConfiguration _configuration)
         {
             _p_env = p_env;
 
-            _productListQuery = productListQuery;
-            _productSearchByCodeQuery = productSearchByCodeQuery;
-            _productSearchByNameQuery = productSearchByNameQuery;
+            _productListQueryForSearch = productListQueryForSearch;
+            _productSearchQuery = productSearchQuery;
 
             _defaultTopCount = _configuration.GetValue<int>("DefaultTopCount");
         }
@@ -41,10 +38,9 @@ namespace bbxBE.POC.WebApi.Controllers.v1
         [ProducesResponseType(typeof(FileContentResult), 200)]
         public async Task<IActionResult> ListSomeProducts([FromRoute] int topCount)
         {
-            return Ok(await _productListQuery.Execute(new ProductListQueryRequest
+            return Ok(await _productListQueryForSearch.Execute(new ProductListQueryRequest
             {
                 TopCount = topCount,
-                Active = true
             }));
         }
 
@@ -53,10 +49,9 @@ namespace bbxBE.POC.WebApi.Controllers.v1
         [ProducesResponseType(typeof(FileContentResult), 200)]
         public async Task<IActionResult> ListSomeProducts()
         {
-            return Ok(await _productListQuery.Execute(new ProductListQueryRequest
+            return Ok(await _productListQueryForSearch.Execute(new ProductListQueryRequest
             {
                 TopCount = _defaultTopCount,
-                Active = true
             }));
         }
 
@@ -65,35 +60,20 @@ namespace bbxBE.POC.WebApi.Controllers.v1
         [ProducesResponseType(typeof(FileContentResult), 200)]
         public async Task<IActionResult> ListAllProducts()
         {
-            return Ok(await _productListQuery.Execute(new ProductListQueryRequest
+            return Ok(await _productListQueryForSearch.Execute(new ProductListQueryRequest
             {
                 TopCount = int.MaxValue,
-                Active = true
             }));
         }
 
-        [Route("search/code/{searchString}")]
+        [Route("search/{searchString}")]
         [HttpGet]
         [ProducesResponseType(typeof(FileContentResult), 200)]
-        public async Task<IActionResult> SearchProductByCode([FromRoute] string searchString)
+        public async Task<IActionResult> SearchProduct([FromRoute] string searchString)
         {
-            return Ok(await _productSearchByCodeQuery.Execute(new ProductListQueryRequest
+            return Ok(await _productSearchQuery.Execute(new ProductListQueryRequest
             {
                 TopCount = _defaultTopCount,
-                Active = true,
-                SearchString = searchString
-            }));
-        }
-
-        [Route("search/name/{searchString}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(FileContentResult), 200)]
-        public async Task<IActionResult> SearchProductByName([FromRoute] string searchString)
-        {
-            return Ok(await _productSearchByNameQuery.Execute(new ProductListQueryRequest
-            {
-                TopCount = _defaultTopCount,
-                Active = true,
                 SearchString = searchString
             }));
         }
