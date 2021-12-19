@@ -20,6 +20,8 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
         private const string COUNT_PRODUCTS = "SELECT COUNT(*) FROM CTRZS";
         private const string QUERY_PRODUCTS = "SELECT TOP (@topCount) * FROM CTRZS";
 
+        private const string FIND_PRODUCT = "SELECT * FROM CTRZS WHERE TERMKOD = @kod";
+
         // Search - only TERMNEV and TERMKOD
 
         private const string QUERY_PRODUCTS_FOR_SEARCH = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS";
@@ -77,6 +79,37 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
             }
         }
 
+        public async Task<ProductListQueryResponse> Read(ProductListQueryRequest req)
+        {
+            var res = new ProductListQueryResponse
+            {
+                Result = new List<CTRZS>(),
+                IsError = false
+            };
+
+            try
+            {
+                using var connection = _context.CreateConnection();
+
+                ClearCacheIfExpired();
+
+                var parameters = new DynamicParameters(new Dictionary<string, object>
+                    {
+                        { "@kod", req.QueryString },
+                    });
+                var products = await connection.QueryAsync<CTRZS>(FIND_PRODUCT, parameters);
+                res.Result = products;
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsError = true;
+                res.Message = string.Format(ERROR, ex.Message); ;
+                return res;
+            }
+        }
+
         public async Task<ProductListQueryResponse> QueryForSearch(ProductListQueryRequest req)
         {
             var res = new ProductListQueryResponse
@@ -94,7 +127,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                 ClearCacheIfExpired();
 
                 var count = (await connection.QueryAsync<int>(COUNT_PRODUCTS,
-                    new DynamicParameters(new Dictionary<string, object>() { { "@searchString", req.SearchString } }))).FirstOrDefault();
+                    new DynamicParameters(new Dictionary<string, object>() { { "@searchString", req.QueryString } }))).FirstOrDefault();
                 if (count > _rowCountThreshold)
                 {
                     res.Message = string.Format(QUERY_TOO_MUCH_RESULT, count, _rowCountThreshold);
@@ -171,13 +204,13 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
 
                 req.TopCount = Math.Clamp(req.TopCount, 1, _rowCountThreshold);
 
-                if (!string.IsNullOrWhiteSpace(req.SearchString))
+                if (!string.IsNullOrWhiteSpace(req.QueryString))
                 {
 
                     ClearCacheIfExpired();
 
                     var count = (await connection.QueryAsync<int>(COUNT_SEARCH_PRODUCTS,
-                        new DynamicParameters(new Dictionary<string, object>() { { "@searchString", req.SearchString } }))).FirstOrDefault();
+                        new DynamicParameters(new Dictionary<string, object>() { { "@searchString", req.QueryString } }))).FirstOrDefault();
                     if (count > _rowCountThreshold)
                     {
                         res.Message = string.Format(SEARCH_TOO_MUCH_RESULT, count, _rowCountThreshold);
@@ -188,7 +221,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     }
 
                     // At first, we try to do the quicksearch in the cache
-                    var cacheSearch = _searchCache.Where(c => c.TERMKOD.Contains(req.SearchString) || c.TERMNEV.Contains(req.SearchString));
+                    var cacheSearch = _searchCache.Where(c => c.TERMKOD.Contains(req.QueryString) || c.TERMNEV.Contains(req.QueryString));
                     if (cacheSearch.Any())
                     {
                         res.Result = cacheSearch;
@@ -217,7 +250,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                     var parameters = new DynamicParameters(new Dictionary<string, object>
                         {
                             { "@topCount", req.TopCount },
-                            { "@searchString", req.SearchString.EncodeForLikeOperator() },
+                            { "@searchString", req.QueryString.EncodeForLikeOperator() },
                         });
                     var products = await connection.QueryAsync<CTRZS>(SEARCH_PRODUCTS, parameters);
 

@@ -6,6 +6,6 @@
 
         public bool Active { get; set; }
 
-        public string SearchString { get; set; }
+        public string QueryString { get; set; }
     }
 }

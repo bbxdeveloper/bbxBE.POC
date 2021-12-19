@@ -14,6 +14,7 @@ namespace bbxBE.POC.WebApi.Controllers.v1
 
         private readonly ProductListQueryForSearch _productListQueryForSearch;
         private readonly ProductSearchQuery _productSearchQuery;
+        private readonly ProductFindQuery _productFindQuery;
 
         private readonly int _defaultTopCount;
 
@@ -22,6 +23,7 @@ namespace bbxBE.POC.WebApi.Controllers.v1
         public ProductController(
             ProductListQueryForSearch productListQueryForSearch,
             ProductSearchQuery productSearchQuery,
+            ProductFindQuery productFindQuery,
             IWebHostEnvironment p_env,
             IConfiguration _configuration)
         {
@@ -29,6 +31,7 @@ namespace bbxBE.POC.WebApi.Controllers.v1
 
             _productListQueryForSearch = productListQueryForSearch;
             _productSearchQuery = productSearchQuery;
+            _productFindQuery = productFindQuery;
 
             _defaultTopCount = _configuration.GetValue<int>("DefaultTopCount");
         }
@@ -74,7 +77,19 @@ namespace bbxBE.POC.WebApi.Controllers.v1
             return Ok(await _productSearchQuery.Execute(new ProductListQueryRequest
             {
                 TopCount = _defaultTopCount,
-                SearchString = searchString
+                QueryString = searchString
+            }));
+        }
+
+        [Route("read/{code}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(FileContentResult), 200)]
+        public async Task<IActionResult> ReadProduct([FromRoute] string code)
+        {
+            return Ok(await _productFindQuery.Execute(new ProductListQueryRequest
+            {
+                TopCount = _defaultTopCount,
+                QueryString = code
             }));
         }
     }
