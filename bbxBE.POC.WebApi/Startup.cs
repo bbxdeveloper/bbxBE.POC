@@ -61,10 +61,13 @@ namespace bbxBE.POC.WebApi
             // Add this line; you'll need `using Serilog;` up the top, too
             app.UseSerilogRequestLogging();
             loggerFactory.AddSerilog();
-            app.UseHttpsRedirection();
             app.UseRouting();
             //Enable CORS
-            app.UseCors("AllowAll");
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwaggerExtension();
