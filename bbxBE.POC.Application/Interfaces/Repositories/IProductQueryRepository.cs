@@ -10,5 +10,7 @@ namespace bbxBE.POC.Application.Interfaces.Repositories
         public Task<ProductListQueryResponse> SearchProduct(ProductListQueryRequest req);
 
         public Task<ProductListQueryResponse> Read(ProductListQueryRequest req);
+
+        public Task<ReportDataQueryResponse> ReadReportData(ReportDataQueryRequest req);
     }
 }

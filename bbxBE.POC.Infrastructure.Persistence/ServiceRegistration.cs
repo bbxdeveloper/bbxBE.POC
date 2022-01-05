@@ -24,6 +24,7 @@ namespace bbxBE.POC.Infrastructure.Persistence
             services.AddSingleton<ProductListQueryForSearch>();
             services.AddSingleton<ProductSearchQuery>();
             services.AddSingleton<ProductFindQuery>(); 
+            services.AddSingleton<SumReportQuery>();
 
             #endregion Commands And Queries
         }

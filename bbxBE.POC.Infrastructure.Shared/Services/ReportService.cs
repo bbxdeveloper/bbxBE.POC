@@ -2,12 +2,14 @@
 using bbxBE.POC.Domain.Exceptions.ReportService;
 using bbxBE.POC.Domain.Models.ReportService;
 using bbxBE.POC.Domain.Settings;
+using bbxBE.POC.Infrastructure.Persistence.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 using Telerik.Reporting;
 using Telerik.Reporting.Processing;
@@ -18,6 +20,7 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
     public class ReportService : IReportService
     {
         private readonly ReportSettings _settings;
+        private readonly SumReportQuery _sumReportQuery;
 
         public readonly static string[] ExportTypes =
         {
@@ -29,22 +32,23 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
             "XAML", "WPFXAML"
         };
 
-        public ReportService(IOptions<ReportSettings> settings)
+        public ReportService(IOptions<ReportSettings> settings, SumReportQuery sumReportQuery)
         {
             _settings = settings.Value;
+            _sumReportQuery = sumReportQuery;
         }
 
         public virtual IActionResult GetReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters)
         {
-            return GenerateReportFile(rootPath, outputFormat, ID, parameters, "C-03176S21.xml");
+            return GenerateReportFileAsync(rootPath, outputFormat, ID, parameters, "C-03176S21.xml");
         }
 
-        public virtual IActionResult GetGradesReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters)
+        public virtual Task<IActionResult> GetGradesReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters)
         {
-            return GenerateReportFile(rootPath, outputFormat, ID, parameters, "bbx_report_poc2.json");
+            return GenerateSumReportFileAsync(rootPath, outputFormat, ID, parameters, "bbx_report_poc2.json");
         }
 
-        private IActionResult GenerateReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName)
+        private IActionResult GenerateReportFileAsync(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName)
         {
             InstanceReportSource rs = GetInstanceReportSource(rootPath, ID);
             if (rs == null)
@@ -58,6 +62,37 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
 
             // JSON DataSources as JSON string parameters
             string dtSrcJSON = GetFileContentAsJsonString(rootPath, dtSrcFileName);
+            rs.Parameters.Add(new Telerik.Reporting.Parameter("JsonDataSourceValue", dtSrcJSON));
+
+            var reportProcessor = new ReportProcessor();
+            var deviceInfo = new System.Collections.Hashtable();
+            var reportSource = rs;
+
+            var result = reportProcessor.RenderReport(outputFormat, reportSource, deviceInfo);
+            if (result == null)
+                throw new Exception("report result is null!");
+
+            var stream = new MemoryStream(result.DocumentBytes);
+            string fileName = ID + "." + outputFormat.ToLower();
+
+            return new FileStreamResult(stream, $"application/{outputFormat.ToLower()}") { FileDownloadName = fileName };
+        }
+
+        private async Task<IActionResult> GenerateSumReportFileAsync(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName)
+        {
+            InstanceReportSource rs = GetInstanceReportSource(rootPath, ID);
+            if (rs == null)
+                throw new ReportException("ReportSource is null!");
+
+            var dicPars = parameters.getReportParameters();
+            foreach (var par in dicPars)
+            {
+                rs.Parameters.Add(new Telerik.Reporting.Parameter(par.Key, par.Value));
+            }
+
+            // JSON DataSources as JSON string parameters
+            var data = await _sumReportQuery.Execute(new ReportDataQueryRequest { From = DateTime.Today - TimeSpan.FromDays(2000d), To = DateTime.Today });
+            string dtSrcJSON = JsonConvert.SerializeObject(data);
             rs.Parameters.Add(new Telerik.Reporting.Parameter("JsonDataSourceValue", dtSrcJSON));
 
             var reportProcessor = new ReportProcessor();

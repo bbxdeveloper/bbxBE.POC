@@ -282,5 +282,44 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
                 return res;
             }
         }
+
+        private const string QUERY_REPORT_DATA =
+            "select SZ.RKTKOD, SZ.SZAMLASZ, SZ.SZAMLAE, SZ.SZAMLAD, SZ.SZAMLAF, SZ.OSSZ, SZ.AFAERT, SZ.BRUTTO, SZ.VEVOID, V.VEVONEV " +
+            "from SZAMLAK SZ " +
+            "inner join VEVO V on V.VEVOID = SZ.VEVOID " +
+            "where SZ.SZAMLAE >= @Date1 and SZ.SZAMLAE <= @Date2 " +
+            "and (SZ.KIMENO and substr(SZ.SZAMLASZ,1,2) <> 'VS') " +
+            "and SZ.FIZMOD< 9 and not SZ.EGYSZLA  and  SZ.FIZMOD != 4 " +
+            "and not SZ.STORNO " +
+            "order by SZ.SZAMLAE";
+        public async Task<ReportDataQueryResponse> ReadReportData(ReportDataQueryRequest req)
+        {
+            var res = new ReportDataQueryResponse
+            {
+                Result = new List<ProductSumReportRow>(),
+                IsError = false
+            };
+
+            try
+            {
+                using var connection = _context.CreateConnection();
+
+                var parameters = new DynamicParameters(new Dictionary<string, object>
+                    {
+                        { "@Date1", req.From },
+                        { "@Date2", req.To },
+                    });
+                var rows = await connection.QueryAsync<ProductSumReportRow>(QUERY_REPORT_DATA, parameters);
+                res.Result = rows;
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsError = true;
+                res.Message = string.Format(ERROR, ex.Message); ;
+                return res;
+            }
+        }
     }
 }
