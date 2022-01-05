@@ -92,6 +92,12 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
 
             // JSON DataSources as JSON string parameters
             var data = await _sumReportQuery.Execute(new ReportDataQueryRequest { From = from, To = to });
+
+            if (data.IsError)
+            {
+                throw new Exception(data.Message);
+            }
+
             string dtSrcJSON = JsonConvert.SerializeObject(data);
             rs.Parameters.Add(new Telerik.Reporting.Parameter("JsonDataSourceValue", dtSrcJSON));
 
