@@ -3,6 +3,7 @@ using bbxBE.POC.Domain.Models.ReportService;
 using bbxBE.POC.Infrastructure.Shared.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace bbxBE.POC.WebApi.Controllers.v1
@@ -30,12 +31,13 @@ namespace bbxBE.POC.WebApi.Controllers.v1
             return _rl.GetReportFile(ContentRootPath, OutputFormat, ID, parameters);
         }
 
-        [Route("render/grades/{ID}/{OutputFormat}")]
+        [Route("render/grades/{ID}/{OutputFormat}/{from}/{to}")]
         [HttpPost]
         [ProducesResponseType(typeof(FileContentResult), 200)]
-        public Task<IActionResult> RenderGradesReportPost([FromRoute] string ID, [FromRoute] string OutputFormat, ReportParams parameters)
+        public Task<IActionResult> RenderGradesReportPost([FromRoute] string ID, [FromRoute] string OutputFormat, 
+            [FromRoute] DateTime from, [FromRoute] DateTime to, ReportParams parameters)
         {
-            return _rl.GetGradesReportFile(ContentRootPath, OutputFormat, ID, parameters);
+            return _rl.GetGradesReportFile(ContentRootPath, OutputFormat, ID, parameters, from, to);
         }
 
         [Route("outputs")]

@@ -43,9 +43,9 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
             return GenerateReportFileAsync(rootPath, outputFormat, ID, parameters, "C-03176S21.xml");
         }
 
-        public virtual Task<IActionResult> GetGradesReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters)
+        public virtual Task<IActionResult> GetGradesReportFile(string rootPath, string outputFormat, string ID, ReportParams parameters, DateTime from, DateTime to)
         {
-            return GenerateSumReportFileAsync(rootPath, outputFormat, ID, parameters, "bbx_report_poc2.json");
+            return GenerateSumReportFileAsync(rootPath, outputFormat, ID, parameters, "bbx_report_poc2.json", from, to);
         }
 
         private IActionResult GenerateReportFileAsync(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName)
@@ -78,7 +78,7 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
             return new FileStreamResult(stream, $"application/{outputFormat.ToLower()}") { FileDownloadName = fileName };
         }
 
-        private async Task<IActionResult> GenerateSumReportFileAsync(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName)
+        private async Task<IActionResult> GenerateSumReportFileAsync(string rootPath, string outputFormat, string ID, ReportParams parameters, string dtSrcFileName, DateTime from, DateTime to)
         {
             InstanceReportSource rs = GetInstanceReportSource(rootPath, ID);
             if (rs == null)
@@ -91,7 +91,7 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
             }
 
             // JSON DataSources as JSON string parameters
-            var data = await _sumReportQuery.Execute(new ReportDataQueryRequest { From = DateTime.Today - TimeSpan.FromDays(2000d), To = DateTime.Today });
+            var data = await _sumReportQuery.Execute(new ReportDataQueryRequest { From = from, To = to });
             string dtSrcJSON = JsonConvert.SerializeObject(data);
             rs.Parameters.Add(new Telerik.Reporting.Parameter("JsonDataSourceValue", dtSrcJSON));
 
