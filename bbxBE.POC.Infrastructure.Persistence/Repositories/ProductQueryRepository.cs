@@ -31,6 +31,16 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
         private const string SEARCH_PRODUCTS_BY_CODE = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS WHERE TERMKOD LIKE @searchString";
         private const string SEARCH_PRODUCTS_BY_NAME = "SELECT TOP (@topCount) TERMKOD, TERMNEV FROM CTRZS WHERE TERMNEV LIKE @searchString";
 
+        private const string QUERY_REPORT_DATA =
+            "select SZ.RKTKOD, SZ.SZAMLASZ, SZ.SZAMLAE, SZ.SZAMLAD, SZ.SZAMLAF, SZ.OSSZ, SZ.AFAERT, SZ.BRUTTO, SZ.VEVOID, V.VEVONEV " +
+            "from SZAMLAK SZ " +
+            "inner join VEVO V on V.VEVOID = SZ.VEVOID " +
+            "where SZ.SZAMLAE >= @Date1 and SZ.SZAMLAE <= @Date2 " +
+            "and (SZ.KIMENO = 1 and substring(SZ.SZAMLASZ,1,2) <> 'VS') " +
+            "and SZ.FIZMOD < 9 and SZ.EGYSZLA = 0  and  SZ.FIZMOD != 4 " +
+            "and SZ.STORNO = 0 " +
+            "order by SZ.SZAMLAE";
+
         #endregion SQL
 
         #region Messages
@@ -283,15 +293,6 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
             }
         }
 
-        private const string QUERY_REPORT_DATA =
-            "select SZ.RKTKOD, SZ.SZAMLASZ, SZ.SZAMLAE, SZ.SZAMLAD, SZ.SZAMLAF, SZ.OSSZ, SZ.AFAERT, SZ.BRUTTO, SZ.VEVOID, V.VEVONEV " +
-            "from SZAMLAK SZ " +
-            "inner join VEVO V on V.VEVOID = SZ.VEVOID " +
-            "where SZ.SZAMLAE >= @Date1 and SZ.SZAMLAE <= @Date2 " +
-            "and (SZ.KIMENO and substr(SZ.SZAMLASZ,1,2) <> 'VS') " +
-            "and SZ.FIZMOD< 9 and not SZ.EGYSZLA  and  SZ.FIZMOD != 4 " +
-            "and not SZ.STORNO " +
-            "order by SZ.SZAMLAE";
         public async Task<ReportDataQueryResponse> ReadReportData(ReportDataQueryRequest req)
         {
             var res = new ReportDataQueryResponse
@@ -317,7 +318,7 @@ namespace bbxBE.POC.Infrastructure.Persistence.Repositories
             catch (Exception ex)
             {
                 res.IsError = true;
-                res.Message = string.Format(ERROR, ex.Message); ;
+                res.Message = string.Format(ERROR, ex.Message);
                 return res;
             }
         }

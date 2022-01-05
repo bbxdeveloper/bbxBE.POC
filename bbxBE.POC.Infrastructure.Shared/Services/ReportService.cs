@@ -98,7 +98,7 @@ namespace bbxBE.POC.Infrastructure.Shared.Services
                 throw new Exception(data.Message);
             }
 
-            string dtSrcJSON = JsonConvert.SerializeObject(data);
+            string dtSrcJSON = JsonConvert.SerializeObject(data.Result);
             rs.Parameters.Add(new Telerik.Reporting.Parameter("JsonDataSourceValue", dtSrcJSON));
 
             var reportProcessor = new ReportProcessor();
